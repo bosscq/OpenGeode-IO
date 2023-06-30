@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.15)
+
+cmake_policy(SET CMP0091 NEW)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
 
 #-------------------------------------------------------------------------------
 # Project options
@@ -26,6 +29,7 @@ cmake_minimum_required(VERSION 3.14)
 # Optional components
 option(OPENGEODE_IO_WITH_TESTS "Compile test projects" ON)
 option(OPENGEODE_IO_WITH_PYTHON "Compile Python bindings" OFF)
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 # Internal options
 option(USE_SUPERBUILD "Whether or not a superbuild should be invoked" ON)
@@ -37,8 +41,9 @@ mark_as_advanced(USE_SUPERBUILD)
 # the one of OpenGeode-IO. This is done during compilation, i.e., OpenGeode-IO.cmake is
 # called (USE_SUPERBUILD = OFF) when the super build project is compiled.
 if(USE_SUPERBUILD)
+    project(SuperBuild)
     include(cmake/SuperBuild.cmake)
 else()
+    project(OpenGeode-IO CXX)
     include(cmake/OpenGeode-IO.cmake)
 endif()
-

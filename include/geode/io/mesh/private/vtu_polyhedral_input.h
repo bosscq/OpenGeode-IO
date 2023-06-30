@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,19 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( PolyhedralSolid );
+    ALIAS_3D( PolyhedralSolid );
+} // namespace geode
+
+namespace geode
+{
     namespace detail
     {
         class VTUPolyhedralInput final : public PolyhedralSolidInput< 3 >
         {
         public:
-            VTUPolyhedralInput(
-                PolyhedralSolid< 3 > &solid, absl::string_view filename )
-                : PolyhedralSolidInput< 3 >( solid, filename )
+            VTUPolyhedralInput( absl::string_view filename )
+                : PolyhedralSolidInput< 3 >( filename )
             {
             }
 
@@ -44,7 +49,8 @@ namespace geode
                 return ext;
             }
 
-            void do_read() final;
+            std::unique_ptr< PolyhedralSolid3D > read(
+                const MeshImpl& impl ) final;
         };
     } // namespace detail
 } // namespace geode

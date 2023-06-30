@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,16 +26,25 @@ add_geode_library(
         "msh_input.cpp"
         "msh_output.cpp"
         "svg_input.cpp"
-    ADVANCED_HEADERS
-        "detail/common.h"
+        "vtm_section_output.cpp"
+        "vtm_brep_output.cpp"
+    PUBLIC_HEADERS
+        "common.h"
     PRIVATE_HEADERS
         "private/msh_input.h"
         "private/msh_output.h"
         "private/svg_input.h"
+        "private/vtm_output.h"
+        "private/vtm_section_output.h"
+        "private/vtm_brep_output.h"
     PRIVATE_DEPENDENCIES
+        Async++
         OpenGeode::basic
         OpenGeode::geometry
         OpenGeode::mesh
         OpenGeode::model
         pugixml::pugixml
+        zlib::zlib
+        ghcFilesystem::ghc_filesystem
+        ${PROJECT_NAME}::mesh
 )

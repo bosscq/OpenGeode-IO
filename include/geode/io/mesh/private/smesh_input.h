@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,7 +116,7 @@ namespace geode
             }
 
             virtual void create_element(
-                const std::array< geode::index_t, element >& vertices ) = 0;
+                const std::array< index_t, element >& vertices ) = 0;
 
             std::vector< absl::string_view > tokens()
             {

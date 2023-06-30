@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,11 @@
 
 #include <pybind11/pybind11.h>
 
-#include <geode/io/model/detail/common.h>
+#include <geode/io/model/common.h>
 
 PYBIND11_MODULE( opengeode_io_py_model, module )
 {
     module.doc() = "OpenGeode-IO Python binding for model";
-    module.def( "initialize_model_io", &geode::detail::initialize_model_io );
+    pybind11::class_< geode::IOModelLibrary >( module, "IOModelLibrary" )
+        .def( "initialize", &geode::IOModelLibrary::initialize );
 }

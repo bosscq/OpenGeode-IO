@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,37 +28,16 @@
 
 #include <geode/io/mesh/private/assimp_input.h>
 
-namespace
-{
-    class STLInputImpl : public geode::detail::AssimpMeshInput
-    {
-    public:
-        STLInputImpl( absl::string_view filename,
-            geode::TriangulatedSurface3D& triangulated_surface )
-            : geode::detail::AssimpMeshInput( filename ),
-              surface_( triangulated_surface )
-        {
-        }
-        void build_mesh()
-        {
-            build_mesh_from_duplicated_vertices( surface_ );
-        }
-
-    private:
-        geode::TriangulatedSurface3D& surface_;
-        Assimp::Importer importer_;
-    };
-} // namespace
-
 namespace geode
 {
     namespace detail
     {
-        void STLInput::do_read()
+        std::unique_ptr< TriangulatedSurface3D > STLInput::read(
+            const MeshImpl& /*unused*/ )
         {
-            STLInputImpl impl{ filename(), triangulated_surface() };
-            impl.read_file();
-            impl.build_mesh();
+            geode::detail::AssimpMeshInput< geode::TriangulatedSurface3D >
+                reader{ filename() };
+            return reader.read_file();
         }
     } // namespace detail
 } // namespace geode

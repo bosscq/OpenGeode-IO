@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,11 +21,17 @@
  *
  */
 
-#include <geode/io/model/detail/common.h>
+#include <geode/io/model/common.h>
+
+#include <geode/model/common.h>
+
+#include <geode/io/mesh/common.h>
 
 #include <geode/io/model/private/msh_input.h>
 #include <geode/io/model/private/msh_output.h>
 #include <geode/io/model/private/svg_input.h>
+#include <geode/io/model/private/vtm_brep_output.h>
+#include <geode/io/model/private/vtm_section_output.h>
 
 namespace
 {
@@ -39,6 +45,9 @@ namespace
     {
         geode::BRepOutputFactory::register_creator< geode::detail::MSHOutput >(
             geode::detail::MSHOutput::extension().data() );
+        geode::BRepOutputFactory::register_creator<
+            geode::detail::VTMBRepOutput >(
+            geode::detail::VTMBRepOutput::extension().data() );
     }
 
     void register_section_input()
@@ -47,22 +56,25 @@ namespace
             geode::detail::SVGInput::extension().data() );
     }
 
-    OPENGEODE_LIBRARY_INITIALIZE( OpenGeode_IO_model )
+    void register_section_output()
     {
-        register_brep_input();
-        register_section_input();
-
-        register_brep_output();
+        geode::SectionOutputFactory::register_creator<
+            geode::detail::VTMSectionOutput >(
+            geode::detail::VTMSectionOutput::extension().data() );
     }
 } // namespace
 
 namespace geode
 {
-    namespace detail
+    OPENGEODE_LIBRARY_IMPLEMENTATION( IOModel )
     {
-        void initialize_model_io()
-        {
-            Logger::info( "Initializing OpenGeode-IO model library" );
-        }
-    } // namespace detail
+        OpenGeodeModelLibrary::initialize();
+        IOMeshLibrary::initialize();
+
+        register_brep_input();
+        register_section_input();
+
+        register_brep_output();
+        register_section_output();
+    }
 } // namespace geode

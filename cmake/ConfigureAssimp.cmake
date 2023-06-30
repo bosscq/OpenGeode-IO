@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,12 @@ set(ASSIMP_PATH ${PROJECT_BINARY_DIR}/third_party/assimp)
 set(ASSIMP_INSTALL_PREFIX ${ASSIMP_PATH}/install)
 ExternalProject_Add(assimp
     PREFIX ${ASSIMP_PATH}
-    GIT_REPOSITORY https://github.com/assimp/assimp
+    SOURCE_DIR ${ASSIMP_PATH}/src
+    BINARY_DIR ${ASSIMP_PATH}/build
+    STAMP_DIR ${ASSIMP_PATH}/stamp
+    GIT_REPOSITORY https://github.com/Geode-solutions/assimp
+    GIT_TAG 21533617f448a0cee34b3d5a329ef4899c49dfb1
     GIT_PROGRESS ON
-    GIT_TAG a34688230d152345d04710e256224b71ce8ba8a1
     CMAKE_GENERATOR ${CMAKE_GENERATOR}
     CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
     CMAKE_ARGS
@@ -32,8 +35,7 @@ ExternalProject_Add(assimp
         -DCMAKE_INSTALL_MESSAGE=LAZY
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     CMAKE_CACHE_ARGS
-        -DCMAKE_C_FLAGS_DEBUG:INTERNAL=${CMAKE_C_FLAGS_DEBUG}
-        -DCMAKE_CXX_FLAGS_DEBUG:INTERNAL=${CMAKE_CXX_FLAGS_DEBUG}
+        -DCMAKE_MSVC_RUNTIME_LIBRARY:STRING=${CMAKE_MSVC_RUNTIME_LIBRARY}
         -DINJECT_DEBUG_POSTFIX:BOOL=OFF
         -DASSIMP_DOUBLE_PRECISION:BOOL=ON
         -DASSIMP_BUILD_ZLIB:BOOL=ON

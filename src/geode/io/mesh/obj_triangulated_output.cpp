@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,11 @@ namespace geode
 {
     namespace detail
     {
-        void OBJTriangulatedOutput::write() const
+        void OBJTriangulatedOutput::write(
+            const TriangulatedSurface3D &surface ) const
         {
             detail::AssimpMeshOutput< TriangulatedSurface3D > impl{ filename(),
-                triangulated_surface(), "obj" };
+                surface, "obj" };
             impl.build_assimp_scene();
             impl.write_file();
         }

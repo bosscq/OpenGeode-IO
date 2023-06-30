@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,8 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.7.2)
-    
+cmake_minimum_required(VERSION 3.15)
+
 if(NOT TARGET OpenGeode-IO::mesh)
     project(OpenGeode-IO CXX)
     find_package(OpenGeode REQUIRED CONFIG)
@@ -33,5 +33,6 @@ set(test_config_file ${PROJECT_BINARY_DIR}/geode/tests_config.h)
 configure_file(${test_config_file_in} ${test_config_file})
 include_directories(${PROJECT_BINARY_DIR})
 
+add_subdirectory(image)
 add_subdirectory(mesh)
 add_subdirectory(model)

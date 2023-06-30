@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,11 @@
  *
  */
 
-#include <geode/io/mesh/detail/common.h>
+#include <geode/io/mesh/common.h>
+
+#include <geode/mesh/common.h>
+
+#include <geode/io/image/common.h>
 
 #include <geode/io/mesh/private/dxf_input.h>
 #include <geode/io/mesh/private/obj_input.h>
@@ -190,9 +194,15 @@ namespace
             geode::detail::VTIRegularGridOutput< 3 > >(
             geode::detail::VTIRegularGridOutput< 3 >::extension().data() );
     }
+} // namespace
 
-    OPENGEODE_LIBRARY_INITIALIZE( OpenGeode_IO_mesh )
+namespace geode
+{
+    OPENGEODE_LIBRARY_IMPLEMENTATION( IOMesh )
     {
+        OpenGeodeMeshLibrary::initialize();
+        IOImageLibrary::initialize();
+
         register_edged_curve_input();
         register_polygonal_surface_input();
         register_triangulated_surface_input();
@@ -209,12 +219,4 @@ namespace
         register_regular_grid_output();
         register_hybrid_solid_output();
     }
-} // namespace
-
-namespace geode
-{
-    namespace detail
-    {
-        void initialize_mesh_io() {}
-    } // namespace detail
 } // namespace geode

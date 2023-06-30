@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,8 @@ namespace geode
         class VTIRegularGridOutput final : public RegularGridOutput< dimension >
         {
         public:
-            VTIRegularGridOutput( const RegularGrid< dimension > &grid,
-                absl::string_view filename )
-                : RegularGridOutput< dimension >{ grid, filename }
+            VTIRegularGridOutput( absl::string_view filename )
+                : RegularGridOutput< dimension >{ filename }
             {
             }
 
@@ -45,7 +44,7 @@ namespace geode
                 return ext;
             }
 
-            void write() const final;
+            void write( const RegularGrid< dimension > &grid ) const final;
         };
     } // namespace detail
 } // namespace geode

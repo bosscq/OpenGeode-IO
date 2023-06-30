@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,37 +31,17 @@
 
 #include <geode/io/mesh/private/assimp_input.h>
 
-namespace
-{
-    class DXFInputImpl : public geode::detail::AssimpMeshInput
-    {
-    public:
-        DXFInputImpl( absl::string_view filename,
-            geode::PolygonalSurface3D& polygonal_surface )
-            : geode::detail::AssimpMeshInput( filename ),
-              surface_( polygonal_surface )
-        {
-        }
-
-        void build_mesh() final
-        {
-            build_mesh_from_duplicated_vertices( surface_ );
-        }
-
-    private:
-        geode::PolygonalSurface3D& surface_;
-    };
-} // namespace
-
 namespace geode
 {
     namespace detail
     {
-        void DXFInput::do_read()
+        std::unique_ptr< PolygonalSurface3D > DXFInput::read(
+            const MeshImpl& /*unused*/ )
         {
-            DXFInputImpl impl{ filename(), polygonal_surface() };
-            impl.read_file();
-            impl.build_mesh();
+            geode::detail::AssimpMeshInput< geode::PolygonalSurface3D > reader{
+                filename()
+            };
+            return reader.read_file();
         }
     } // namespace detail
 } // namespace geode

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,19 +30,17 @@
 #include <geode/mesh/io/polygonal_surface_input.h>
 #include <geode/mesh/io/polygonal_surface_output.h>
 
-#include <geode/io/mesh/detail/common.h>
+#include <geode/io/mesh/common.h>
 
 int main()
 {
-    using namespace geode;
-
     try
     {
-        detail::initialize_mesh_io();
+        geode::IOMeshLibrary::initialize();
         // Load file
-        auto surface = load_polygonal_surface< 3 >(
-            absl::StrCat( data_path, "3D_faces.dxf" ) );
-        OPENGEODE_EXCEPTION( surface->nb_vertices() == 51884,
+        auto surface = geode::load_polygonal_surface< 3 >(
+            absl::StrCat( geode::data_path, "3D_faces.dxf" ) );
+        OPENGEODE_EXCEPTION( surface->nb_vertices() == 49323,
             "[Test] Number of vertices in the loaded Surface is not correct" );
         OPENGEODE_EXCEPTION( surface->nb_polygons() == 97966,
             "[Test] Number of polygons in the loaded Surface is not correct" );
@@ -50,13 +48,13 @@ int main()
         // Save file
         const auto output_file_og =
             absl::StrCat( "dxf.", surface->native_extension() );
-        save_polygonal_surface( *surface, output_file_og );
+        geode::save_polygonal_surface( *surface, output_file_og );
 
-        Logger::info( "TEST SUCCESS" );
+        geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
     catch( ... )
     {
-        return geode_lippincott();
+        return geode::geode_lippincott();
     }
 }

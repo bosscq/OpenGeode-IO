@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,10 @@ namespace geode
 {
     namespace detail
     {
-        void PLYOutput::write() const
+        void PLYOutput::write( const PolygonalSurface3D &surface ) const
         {
             detail::AssimpMeshOutput< PolygonalSurface3D > impl{ filename(),
-                polygonal_surface(), "ply" };
+                surface, "ply" };
             impl.build_assimp_scene();
             impl.write_file();
         }

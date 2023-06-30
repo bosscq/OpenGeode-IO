@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,11 +65,13 @@ namespace geode
 {
     namespace detail
     {
-        void SMESHTriangulatedInput::do_read()
+        std::unique_ptr< TriangulatedSurface3D > SMESHTriangulatedInput::read(
+            const MeshImpl& impl )
         {
-            SMESHTriangulatedInputImpl impl{ filename(),
-                triangulated_surface() };
-            impl.read_file();
+            auto surface = TriangulatedSurface3D::create( impl );
+            SMESHTriangulatedInputImpl reader{ filename(), *surface };
+            reader.read_file();
+            return surface;
         }
     } // namespace detail
 } // namespace geode

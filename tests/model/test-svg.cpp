@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,7 @@
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/point_set.h>
 #include <geode/mesh/core/polygonal_surface.h>
-#include <geode/mesh/core/polyhedral_solid.h>
 
-#include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/corner.h>
 #include <geode/model/mixin/core/line.h>
 #include <geode/model/mixin/core/surface.h>
@@ -40,7 +38,7 @@
 #include <geode/model/representation/io/section_input.h>
 #include <geode/model/representation/io/section_output.h>
 
-#include <geode/io/model/detail/common.h>
+#include <geode/io/model/common.h>
 
 geode::index_t nb_closed_lines( const geode::Section& section )
 {
@@ -67,8 +65,8 @@ void test_section( const geode::Section& section )
         "[Test] Number of surfaces is not correct" );
     for( const auto uv : geode::Range{ section.nb_unique_vertices() } )
     {
-        const auto nb_mcv = section.mesh_component_vertices( uv ).size();
-        OPENGEODE_EXCEPTION( nb_mcv == 1 || nb_mcv == 3,
+        const auto nb_cmv = section.component_mesh_vertices( uv ).size();
+        OPENGEODE_EXCEPTION( nb_cmv == 1 || nb_cmv == 3,
             "[Test] Wrong number of mesh component "
             "vertices for one unique vertex" );
     }
@@ -76,28 +74,27 @@ void test_section( const geode::Section& section )
 
 int main()
 {
-    using namespace geode;
-
     try
     {
-        detail::initialize_model_io();
+        geode::IOModelLibrary::initialize();
 
         // Load file
-        auto section = load_section( absl::StrCat( data_path, "/logo.svg" ) );
+        auto section = geode::load_section(
+            absl::StrCat( geode::data_path, "/logo.svg" ) );
         test_section( section );
 
         // Save and reload
         const auto filename =
             absl::StrCat( "logo.", section.native_extension() );
-        save_section( section, filename );
-        auto reloaded_section = load_section( filename );
+        geode::save_section( section, filename );
+        auto reloaded_section = geode::load_section( filename );
         test_section( reloaded_section );
 
-        Logger::info( "TEST SUCCESS" );
+        geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
     catch( ... )
     {
-        return geode_lippincott();
+        return geode::geode_lippincott();
     }
 }

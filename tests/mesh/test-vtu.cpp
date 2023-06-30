@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@
 #include <geode/mesh/io/tetrahedral_solid_input.h>
 #include <geode/mesh/io/tetrahedral_solid_output.h>
 
-#include <geode/io/mesh/detail/common.h>
+#include <geode/io/mesh/common.h>
 
 void check( const geode::SolidMesh< 3 >& solid,
     const std::array< geode::index_t, 2 >& test_answers )
@@ -53,16 +53,16 @@ void run_test( absl::string_view filename,
     const std::array< geode::index_t, 2 >& test_answers )
 {
     // Load file
-    auto tetra_solid = geode::load_tetrahedral_solid< 3 >(
+    auto solid = geode::load_tetrahedral_solid< 3 >(
         absl::StrCat( geode::data_path, filename ) );
-    check( *tetra_solid, test_answers );
+    check( *solid, test_answers );
 
     // Save file
     absl::string_view filename_without_ext{ filename };
     filename_without_ext.remove_suffix( 4 );
-    const auto output_filename = absl::StrCat(
-        filename_without_ext, ".", tetra_solid->native_extension() );
-    geode::save_tetrahedral_solid( *tetra_solid, output_filename );
+    const auto output_filename =
+        absl::StrCat( filename_without_ext, ".", solid->native_extension() );
+    geode::save_tetrahedral_solid( *solid, output_filename );
 
     // Reload file
     auto reload_solid = geode::load_tetrahedral_solid< 3 >( output_filename );
@@ -71,7 +71,7 @@ void run_test( absl::string_view filename,
     // Save file
     const auto output_filename_vtu =
         absl::StrCat( filename_without_ext, "_output.vtu" );
-    geode::save_tetrahedral_solid( *tetra_solid, output_filename_vtu );
+    geode::save_tetrahedral_solid( *solid, output_filename_vtu );
 
     // Reload file
     auto reload_vtu = geode::load_hybrid_solid< 3 >( output_filename_vtu );
@@ -82,7 +82,7 @@ int main()
 {
     try
     {
-        geode::detail::initialize_mesh_io();
+        geode::IOMeshLibrary::initialize();
 
         run_test( "cone.vtu", { 580, 2197 } );
         run_test( "cone_append_encoded.vtu", { 580, 2197 } );

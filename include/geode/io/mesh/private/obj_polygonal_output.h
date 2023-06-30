@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,19 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( PolygonalSurface );
+    ALIAS_3D( PolygonalSurface );
+} // namespace geode
+
+namespace geode
+{
     namespace detail
     {
         class OBJPolygonalOutput final : public PolygonalSurfaceOutput< 3 >
         {
         public:
-            OBJPolygonalOutput( const PolygonalSurface< 3 > &surface,
-                absl::string_view filename )
-                : PolygonalSurfaceOutput< 3 >( surface, filename )
+            OBJPolygonalOutput( absl::string_view filename )
+                : PolygonalSurfaceOutput< 3 >( filename )
             {
             }
 
@@ -44,7 +49,7 @@ namespace geode
                 return ext;
             }
 
-            void write() const final;
+            void write( const PolygonalSurface3D &surface ) const final;
         };
     } // namespace detail
 } // namespace geode

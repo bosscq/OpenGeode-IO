@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,8 +42,8 @@ namespace
             : geode::detail::VTUInputImpl< geode::PolyhedralSolid3D,
                 geode::PolyhedralSolidBuilder3D >( filename, solid )
         {
-            enable_tetra();
-            enable_hexa();
+            enable_tetrahedron();
+            enable_hexahedron();
             enable_prism();
             enable_pyramid();
         }
@@ -54,10 +54,13 @@ namespace geode
 {
     namespace detail
     {
-        void VTUPolyhedralInput::do_read()
+        std::unique_ptr< PolyhedralSolid3D > VTUPolyhedralInput::read(
+            const MeshImpl& impl )
         {
-            VTUPolyhedralInputImpl impl{ filename(), polyhedral_solid() };
-            impl.read_file();
+            auto solid = PolyhedralSolid3D::create( impl );
+            VTUPolyhedralInputImpl reader{ filename(), *solid };
+            reader.read_file();
+            return solid;
         }
     } // namespace detail
 } // namespace geode

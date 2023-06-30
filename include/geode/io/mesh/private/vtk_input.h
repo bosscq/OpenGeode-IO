@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +23,16 @@
 
 #pragma once
 
-#include <geode/io/mesh/detail/common.h>
+#include <geode/io/mesh/common.h>
 
 #include <fstream>
 
-#include <absl/strings/ascii.h>
-#include <absl/strings/escaping.h>
-#include <absl/strings/match.h>
-#include <absl/strings/numbers.h>
-#include <absl/strings/str_split.h>
 #include <pugixml.hpp>
-#include <zlib-ng.h>
+
+#include <zlib.h>
+
+#include <absl/strings/escaping.h>
+#include <absl/strings/str_split.h>
 
 #include <geode/basic/attribute_manager.h>
 
@@ -178,7 +177,7 @@ namespace geode
             {
                 absl::FixedArray< std::vector< index_t > > cell_vertices(
                     offsets.size() );
-                index_t prev_offset{ 0 };
+                int64_t prev_offset{ 0 };
                 for( const auto p : Indices{ offsets } )
                 {
                     const auto cur_offset = offsets[p];
@@ -186,7 +185,8 @@ namespace geode
                     vertices.reserve( cur_offset - prev_offset );
                     for( const auto v : Range{ prev_offset, cur_offset } )
                     {
-                        vertices.push_back( connectivity[v] );
+                        vertices.push_back(
+                            static_cast< index_t >( connectivity[v] ) );
                     }
                     prev_offset = cur_offset;
                 }
@@ -224,7 +224,7 @@ namespace geode
                         manager
                             .find_or_create_attribute< VariableAttribute, T >(
                                 name, T{} );
-                    for( const auto i : geode::Indices{ values } )
+                    for( const auto i : Indices{ values } )
                     {
                         attribute->set_value( i + offset, values[i] );
                     }
@@ -332,10 +332,9 @@ namespace geode
                 auto attribute =
                     manager.find_or_create_attribute< VariableAttribute,
                         Container >( name, default_value );
-                for( const auto i :
-                    geode::Range{ values.size() / nb_components } )
+                for( const auto i : Range{ values.size() / nb_components } )
                 {
-                    for( const auto c : geode::Range{ nb_components } )
+                    for( const auto c : Range{ nb_components } )
                     {
                         const auto& new_value = values[nb_components * i + c];
                         attribute->modify_value(
@@ -486,14 +485,15 @@ namespace geode
                 return result;
             }
 
-            template < typename UInt >
-            constexpr index_t nb_char_needed( index_t nb_values ) const
+            template < typename UInt, typename UInt2 >
+            constexpr index_t nb_char_needed( UInt2 nb_values ) const
             {
                 // to encode the nb values in base64
                 // ((nb * 8 * nb bytes) bits / 6) ->ceil
-                return 4
-                       * std::ceil(
-                           nb_values * 8. * sizeof( UInt ) / ( 6. * 4. ) );
+                return static_cast< index_t >(
+                    4
+                    * std::ceil(
+                        nb_values * 8. * sizeof( UInt ) / ( 6. * 4. ) ) );
             }
 
             template < typename T, typename UInt >
@@ -526,8 +526,8 @@ namespace geode
                 const auto optional_header_values =
                     reinterpret_cast< const UInt* >(
                         decoded_optional_header.c_str() );
-                index_t sum_compressed_block_size{ 0 };
-                absl::FixedArray< index_t > compressed_blocks_size(
+                UInt sum_compressed_block_size{ 0 };
+                absl::FixedArray< UInt > compressed_blocks_size(
                     nb_data_blocks );
                 for( const auto b : Range{ nb_data_blocks } )
                 {
@@ -537,8 +537,8 @@ namespace geode
 
                 const auto data_offset =
                     nb_char_needed< UInt >( 3 + nb_data_blocks );
-                const auto nb_data_char =
-                    std::ceil( sum_compressed_block_size * 4. / 3. );
+                const auto nb_data_char = static_cast< size_t >(
+                    std::ceil( sum_compressed_block_size * 4. / 3. ) );
                 auto data = input.substr( data_offset, nb_data_char );
                 const auto decoded_data = decode_base64( data );
                 const auto compressed_data_bytes =
@@ -546,18 +546,20 @@ namespace geode
                         decoded_data.c_str() );
 
                 std::vector< T > result;
-                result.reserve( std::ceil(
-                    nb_data_blocks * uncompressed_block_size / sizeof( T ) ) );
-                index_t cur_data_offset{ 0 };
+                result.reserve( static_cast< size_t >(
+                    std::ceil( nb_data_blocks * uncompressed_block_size
+                               / sizeof( T ) ) ) );
+                UInt cur_data_offset{ 0 };
                 for( const auto b : Range{ nb_data_blocks } )
                 {
                     const auto compressed_data_length =
                         sum_compressed_block_size;
-                    size_t decompressed_data_length = uncompressed_block_size;
+                    unsigned long decompressed_data_length =
+                        uncompressed_block_size;
                     absl::FixedArray< uint8_t > decompressed_data_bytes(
                         decompressed_data_length );
                     const auto uncompress_result =
-                        zng_uncompress( decompressed_data_bytes.data(),
+                        uncompress( decompressed_data_bytes.data(),
                             &decompressed_data_length,
                             &compressed_data_bytes[cur_data_offset],
                             compressed_data_length );

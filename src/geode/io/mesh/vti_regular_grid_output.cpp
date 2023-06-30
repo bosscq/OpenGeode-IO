@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,32 +23,41 @@
 
 #include <geode/io/mesh/private/vti_regular_grid_output.h>
 
-#include <geode/geometry/bounding_box.h>
-#include <geode/geometry/point.h>
+#include <geode/mesh/core/regular_grid_solid.h>
+#include <geode/mesh/core/regular_grid_surface.h>
 
-#include <geode/mesh/core/regular_grid.h>
-
-#include <geode/io/mesh/private/vtk_output.h>
+#include <geode/io/image/private/vti_output_impl.h>
 
 namespace
 {
-    template < geode::index_t dimension >
+    template < geode::index_t dim >
     class VTIOutputImpl
-        : public geode::detail::VTKOutputImpl< geode::RegularGrid< dimension > >
+        : public geode::detail::VTIOutputImpl< geode::RegularGrid< dim > >
     {
     public:
-        VTIOutputImpl( const geode::RegularGrid< dimension >& grid,
-            absl::string_view filename )
-            : geode::detail::VTKOutputImpl< geode::RegularGrid< dimension > >{
-                  filename, grid, "ImageData"
-              }
+        VTIOutputImpl(
+            const geode::RegularGrid< dim >& grid, absl::string_view filename )
+            : geode::detail::VTIOutputImpl< geode::RegularGrid< dim > >{ grid,
+                  filename }
         {
         }
 
     private:
-        void write_piece( pugi::xml_node& piece ) final
+        void write_piece( pugi::xml_node& object ) final
         {
-            write_image_header( piece );
+            auto piece = object.append_child( "Piece" );
+            std::array< geode::index_t, dim > extent;
+            for( const auto d : geode::LRange{ dim } )
+            {
+                extent[d] = this->mesh().nb_vertices_in_direction( d );
+            }
+            std::array< double, dim > spacing;
+            for( const auto d : geode::LRange{ dim } )
+            {
+                spacing[d] = this->mesh().cell_length_in_direction( d );
+            }
+            this->write_image_header(
+                piece, this->mesh().origin(), extent, spacing );
             write_vertex_data( piece );
             write_cell_data( piece );
         }
@@ -66,47 +75,6 @@ namespace
             this->write_attributes(
                 vertex_data, this->mesh().vertex_attribute_manager() );
         }
-
-        void write_image_header( pugi::xml_node& piece )
-        {
-            auto image = piece.parent();
-            std::string extent;
-            for( const auto d : geode::LRange{ dimension } )
-            {
-                if( d != 0 )
-                {
-                    absl::StrAppend( &extent, " " );
-                }
-                absl::StrAppend( &extent, "0 ", this->mesh().nb_cells( d ) );
-            }
-            if( dimension == 2 )
-            {
-                absl::StrAppend( &extent, " 0 0" );
-            }
-            image.append_attribute( "WholeExtent" ).set_value( extent.c_str() );
-            piece.append_attribute( "Extent" ).set_value( extent.c_str() );
-            std::string origin;
-            absl::StrAppend( &origin, this->mesh().origin().string() );
-            if( dimension == 2 )
-            {
-                absl::StrAppend( &origin, " 0" );
-            }
-            image.append_attribute( "Origin" ).set_value( origin.c_str() );
-            std::string spacing;
-            for( const auto d : geode::LRange{ dimension } )
-            {
-                if( d != 0 )
-                {
-                    absl::StrAppend( &spacing, " " );
-                }
-                absl::StrAppend( &spacing, this->mesh().cell_length( d ) );
-            }
-            if( dimension == 2 )
-            {
-                absl::StrAppend( &spacing, " 1" );
-            }
-            image.append_attribute( "Spacing" ).set_value( spacing.c_str() );
-        }
     };
 } // namespace
 
@@ -115,14 +83,14 @@ namespace geode
     namespace detail
     {
         template < index_t dimension >
-        void VTIRegularGridOutput< dimension >::write() const
+        void VTIRegularGridOutput< dimension >::write(
+            const RegularGrid< dimension >& grid ) const
         {
-            VTIOutputImpl< dimension > impl{ this->regular_grid(),
-                this->filename() };
+            ::VTIOutputImpl< dimension > impl{ grid, this->filename() };
             impl.write_file();
         }
 
-        template class opengeode_io_mesh_api VTIRegularGridOutput< 2 >;
-        template class opengeode_io_mesh_api VTIRegularGridOutput< 3 >;
+        template class VTIRegularGridOutput< 2 >;
+        template class VTIRegularGridOutput< 3 >;
     } // namespace detail
 } // namespace geode

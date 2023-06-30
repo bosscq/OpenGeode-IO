@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,28 +29,26 @@
 #include <geode/mesh/core/triangulated_surface.h>
 #include <geode/mesh/io/triangulated_surface_input.h>
 
-#include <geode/io/mesh/detail/common.h>
+#include <geode/io/mesh/common.h>
 
 int main()
 {
-    using namespace geode;
-
     try
     {
-        detail::initialize_mesh_io();
+        geode::IOMeshLibrary::initialize();
         // Load file
-        auto surface = load_triangulated_surface< 3 >(
-            absl::StrCat( data_path, "triangulated.smesh" ) );
+        auto surface = geode::load_triangulated_surface< 3 >(
+            absl::StrCat( geode::data_path, "triangulated.smesh" ) );
         OPENGEODE_EXCEPTION( surface->nb_vertices() == 111,
             "[Test] Number of vertices in the loaded Surface is not correct" );
         OPENGEODE_EXCEPTION( surface->nb_polygons() == 186,
             "[Test] Number of polygons in the loaded Surface is not correct" );
 
-        Logger::info( "TEST SUCCESS" );
+        geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
     catch( ... )
     {
-        return geode_lippincott();
+        return geode::geode_lippincott();
     }
 }

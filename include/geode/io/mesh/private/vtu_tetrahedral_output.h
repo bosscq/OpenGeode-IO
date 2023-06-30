@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,19 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( TetrahedralSolid );
+    ALIAS_3D( TetrahedralSolid );
+} // namespace geode
+
+namespace geode
+{
     namespace detail
     {
         class VTUTetrahedralOutput final : public TetrahedralSolidOutput< 3 >
         {
         public:
-            VTUTetrahedralOutput(
-                const TetrahedralSolid< 3 > &solid, absl::string_view filename )
-                : TetrahedralSolidOutput< 3 >( solid, filename )
+            VTUTetrahedralOutput( absl::string_view filename )
+                : TetrahedralSolidOutput< 3 >( filename )
             {
             }
 
@@ -44,7 +49,7 @@ namespace geode
                 return ext;
             }
 
-            void write() const final;
+            void write( const TetrahedralSolid3D &solid ) const final;
         };
     } // namespace detail
 } // namespace geode

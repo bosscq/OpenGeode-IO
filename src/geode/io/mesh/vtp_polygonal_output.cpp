@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +25,18 @@
 
 #include <geode/mesh/core/polygonal_surface.h>
 
-#include <geode/io/mesh/private/vtk_output.h>
-#include <geode/io/mesh/private/vtp_output_impl.h>
+#include <geode/io/mesh/private/vtp_surface_output_impl.h>
 
 namespace geode
 {
     namespace detail
     {
         template < index_t dimension >
-        void VTPPolygonalOutput< dimension >::write() const
+        void VTPPolygonalOutput< dimension >::write(
+            const PolygonalSurface< dimension > &surface ) const
         {
-            VTPOutputImpl< geode::PolygonalSurface, dimension > impl{
-                this->filename(), this->polygonal_surface()
+            VTPSurfaceOutputImpl< geode::PolygonalSurface, dimension > impl{
+                this->filename(), surface
             };
             impl.write_file();
         }

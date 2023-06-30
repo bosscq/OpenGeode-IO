@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,19 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( PolygonalSurface );
+    ALIAS_3D( PolygonalSurface );
+} // namespace geode
+
+namespace geode
+{
     namespace detail
     {
         class PLYInput final : public PolygonalSurfaceInput< 3 >
         {
         public:
-            PLYInput(
-                PolygonalSurface< 3 >& surface, absl::string_view filename )
-                : PolygonalSurfaceInput< 3 >( surface, filename )
+            PLYInput( absl::string_view filename )
+                : PolygonalSurfaceInput< 3 >( filename )
             {
             }
 
@@ -44,7 +49,8 @@ namespace geode
                 return ext;
             }
 
-            void do_read() final;
+            std::unique_ptr< PolygonalSurface3D > read(
+                const MeshImpl& impl ) final;
         };
     } // namespace detail
 } // namespace geode

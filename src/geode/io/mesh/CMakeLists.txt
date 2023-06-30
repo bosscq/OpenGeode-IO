@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -47,8 +47,8 @@ add_geode_library(
         "vtu_polyhedral_output.cpp"
         "vtu_tetrahedral_input.cpp"
         "vtu_tetrahedral_output.cpp"
-    ADVANCED_HEADERS
-        "detail/common.h"
+    PUBLIC_HEADERS
+        "common.h"
     PRIVATE_HEADERS
         "private/assimp_input.h"
         "private/assimp_output.h"
@@ -65,13 +65,13 @@ add_geode_library(
         "private/stl_output.h"
         "private/triangle_output.h"
         "private/vtk_input.h"
-        "private/vtk_output.h"
+        "private/vtk_mesh_output.h"
         "private/vti_regular_grid_output.h"
         "private/vtp_edged_curve_output.h"
         "private/vtp_input.h"
-        "private/vtp_output_impl.h"
         "private/vtp_point_set_output.h"
         "private/vtp_polygonal_output.h"
+        "private/vtp_surface_output_impl.h"
         "private/vtp_triangulated_output.h"
         "private/vtu_hybrid_output.h"
         "private/vtu_input_impl.h"
@@ -84,8 +84,11 @@ add_geode_library(
     PRIVATE_DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry
+        OpenGeode::image
         OpenGeode::mesh
         assimp::assimp
         pugixml::pugixml
-        zlib::zlibstatic
+        zlib::zlib
+        Async++
+        ${PROJECT_NAME}::image
 )

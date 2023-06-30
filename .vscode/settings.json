@@ -10,6 +10,7 @@
         "${workspaceFolder:OpenGeode}/build/opengeode",
         "${workspaceFolder:OpenGeode}/build/third_party/abseil/install/include",
         "${workspaceFolder:OpenGeode}/build/third_party/bitsery/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/gdal/install/include",
         "${workspaceFolder:OpenGeode}/build/third_party/pybind11/install/include",
         "${workspaceFolder:OpenGeode}/build/third_party/asyncplusplus/install/include"
     ],

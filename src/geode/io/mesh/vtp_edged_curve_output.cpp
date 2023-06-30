@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,17 +49,17 @@ namespace
                 .set_value( this->mesh().nb_edges() );
         }
 
-        void write_vtk_cells( pugi::xml_node& piece ) override
+        pugi::xml_node write_vtk_cells( pugi::xml_node& piece ) override
         {
-            auto polys = piece.append_child( "Lines" );
-            auto connectivity = polys.append_child( "DataArray" );
+            auto lines = piece.append_child( "Lines" );
+            auto connectivity = lines.append_child( "DataArray" );
             connectivity.append_attribute( "type" ).set_value( "Int64" );
             connectivity.append_attribute( "Name" ).set_value( "connectivity" );
             connectivity.append_attribute( "format" ).set_value( "ascii" );
             connectivity.append_attribute( "RangeMin" ).set_value( 0 );
             connectivity.append_attribute( "RangeMax" )
                 .set_value( this->mesh().nb_vertices() - 1 );
-            auto offsets = polys.append_child( "DataArray" );
+            auto offsets = lines.append_child( "DataArray" );
             offsets.append_attribute( "type" ).set_value( "Int64" );
             offsets.append_attribute( "Name" ).set_value( "offsets" );
             offsets.append_attribute( "format" ).set_value( "ascii" );
@@ -84,13 +84,16 @@ namespace
             }
             connectivity.text().set( edge_connectivity.c_str() );
             offsets.text().set( edge_offsets.c_str() );
+            return lines;
         }
 
-        void write_vtk_cell_attributes( pugi::xml_node& piece ) override
+        pugi::xml_node write_vtk_cell_attributes(
+            pugi::xml_node& piece ) override
         {
             auto cell_data = piece.append_child( "CellData" );
             this->write_attributes(
                 cell_data, this->mesh().edge_attribute_manager() );
+            return cell_data;
         }
     };
 } // namespace
@@ -100,10 +103,10 @@ namespace geode
     namespace detail
     {
         template < index_t dimension >
-        void VTPEdgedCurveOutput< dimension >::write() const
+        void VTPEdgedCurveOutput< dimension >::write(
+            const EdgedCurve< dimension >& curve ) const
         {
-            VTPCurveOutputImpl< dimension > impl{ this->filename(),
-                this->edged_curve() };
+            VTPCurveOutputImpl< dimension > impl{ this->filename(), curve };
             impl.write_file();
         }
 

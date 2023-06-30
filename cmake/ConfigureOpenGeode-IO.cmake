@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,10 @@ ExternalProject_Add(opengeode-io
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
+        -DCPACK_SYSTEM_NAME=${CPACK_SYSTEM_NAME}
+        -DCPACK_PACKAGE_VERSION=${CPACK_PACKAGE_VERSION}
         -DCMAKE_INSTALL_MESSAGE=LAZY
+        -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     CMAKE_CACHE_ARGS
         -DWHEEL_VERSION:STRING=${WHEEL_VERSION}
         -DPYTHON_VERSION:STRING=${PYTHON_VERSION}
@@ -46,3 +49,11 @@ ExternalProject_Add(opengeode-io
         pugixml
         zlib
 )
+
+ExternalProject_Add_StepTargets(opengeode-io configure)
+
+add_custom_target(third_party
+    DEPENDS
+        opengeode-io-configure
+)
+

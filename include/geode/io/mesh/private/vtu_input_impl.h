@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,21 +38,21 @@ namespace geode
             VTUInputImpl( absl::string_view filename, Mesh& solid )
                 : VTKInputImpl< Mesh, Builder >(
                     filename, solid, "UnstructuredGrid" ),
-                  vtk_tetra_( 4 ),
-                  vtk_hexa_( 6 ),
+                  vtk_tetrahedron_( 4 ),
+                  vtk_hexahedron_( 6 ),
                   vtk_prism_( 5 ),
                   vtk_pyramid_( 5 )
             {
-                vtk_tetra_[0] = { 1, 3, 2 };
-                vtk_tetra_[1] = { 0, 2, 3 };
-                vtk_tetra_[2] = { 3, 1, 0 };
-                vtk_tetra_[3] = { 0, 1, 2 };
-                vtk_hexa_[0] = { 0, 4, 5, 1 };
-                vtk_hexa_[1] = { 1, 5, 7, 3 };
-                vtk_hexa_[2] = { 3, 7, 6, 2 };
-                vtk_hexa_[3] = { 2, 6, 4, 0 };
-                vtk_hexa_[4] = { 4, 6, 7, 5 };
-                vtk_hexa_[5] = { 0, 1, 3, 2 };
+                vtk_tetrahedron_[0] = { 1, 3, 2 };
+                vtk_tetrahedron_[1] = { 0, 2, 3 };
+                vtk_tetrahedron_[2] = { 3, 1, 0 };
+                vtk_tetrahedron_[3] = { 0, 1, 2 };
+                vtk_hexahedron_[0] = { 0, 4, 5, 1 };
+                vtk_hexahedron_[1] = { 1, 5, 7, 3 };
+                vtk_hexahedron_[2] = { 3, 7, 6, 2 };
+                vtk_hexahedron_[3] = { 2, 6, 4, 0 };
+                vtk_hexahedron_[4] = { 4, 6, 7, 5 };
+                vtk_hexahedron_[5] = { 0, 1, 3, 2 };
                 vtk_prism_[0] = { 0, 2, 1 };
                 vtk_prism_[1] = { 3, 4, 5 };
                 vtk_prism_[2] = { 0, 3, 5, 2 };
@@ -65,15 +65,15 @@ namespace geode
                 vtk_pyramid_[4] = { 0, 1, 2, 3 };
             }
 
-            void enable_tetra()
+            void enable_tetrahedron()
             {
-                elements_.emplace( 10, vtk_tetra_ );
+                elements_.emplace( 10, vtk_tetrahedron_ );
             }
 
-            void enable_hexa()
+            void enable_hexahedron()
             {
-                elements_.emplace( 11, vtk_hexa_ ); // voxel
-                elements_.emplace( 12, vtk_hexa_ ); // hexa
+                elements_.emplace( 11, vtk_hexahedron_ ); // voxel
+                elements_.emplace( 12, vtk_hexahedron_ ); // hexahedron
             }
 
             void enable_prism()
@@ -175,8 +175,8 @@ namespace geode
 
         private:
             absl::flat_hash_map< int64_t, VTKElement > elements_;
-            VTKElement vtk_tetra_;
-            VTKElement vtk_hexa_;
+            VTKElement vtk_tetrahedron_;
+            VTKElement vtk_hexahedron_;
             VTKElement vtk_prism_;
             VTKElement vtk_pyramid_;
         };

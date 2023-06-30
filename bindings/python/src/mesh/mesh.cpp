@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,11 @@
 
 #include <pybind11/pybind11.h>
 
-#include <geode/io/mesh/detail/common.h>
+#include <geode/io/mesh/common.h>
 
 PYBIND11_MODULE( opengeode_io_py_mesh, module )
 {
     module.doc() = "OpenGeode-IO Python binding for mesh";
-    module.def( "initialize_mesh_io", &geode::detail::initialize_mesh_io );
+    pybind11::class_< geode::IOMeshLibrary >( module, "IOMeshLibrary" )
+        .def( "initialize", &geode::IOMeshLibrary::initialize );
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -67,9 +67,9 @@ namespace geode
 {
     namespace detail
     {
-        void VTUHybridOutput::write() const
+        void VTUHybridOutput::write( const HybridSolid3D& solid ) const
         {
-            VTUHybridOutputImpl impl{ filename(), hybrid_solid() };
+            VTUHybridOutputImpl impl{ filename(), solid };
             impl.write_file();
         }
     } // namespace detail
